@@ -43,18 +43,16 @@ router.post('/signup', (req, res, next) => {
     User.create({
         firstName: req.body.firstName,
         email: req.body.email,
-        password: req.body.password
+        password: req.body.password,
+        preference: {
+            //here we can assign values to the optional widgets such as news, weather, etc
+        }
     },{
-        include: Preferences
+        include: [Preferences]
     })
     .then(createdUser => {
-        return Preferences.create()
-        .then(preference => {
-            createdUser.setPreference(preference)
             req.login(createdUser, err => (err ? next(err) :res.json(createdUser)))
         })
-    })
-
     // //creates a session for the user that has been registered
     // .then(user => {
     //     return req.login(user, err => (err ? next(err) :res.json(user)))
@@ -69,6 +67,7 @@ router.post('/signup', (req, res, next) => {
         }
     })
 })
+
 
 //does not delete user from database
 router.delete('/logout', (req, res, next) => {
