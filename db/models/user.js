@@ -32,15 +32,11 @@ const User = db.define('user', {
 });
 
 User.generateSalt = () => {
-    console.log("generating salt")
-    const salt = crypto.randomBytes(16).toString("base64")
-    console.log("made salt")
-    return salt
+    return crypto.randomBytes(16).toString("base64")
 }
 
 //creating an encrypted password
 User.encryptPassword = (plaintext, salt) => {
-    console.log("encrypting")
     return crypto.createHash('RSA-SHA256')
     .update(plaintext)
     .update(salt)
@@ -54,13 +50,9 @@ User.prototype.correctPassword = function(candidatepw) {
 }
 
 const setSaltandPassword = user => {
-    console.log("setting salt and pw")
     if (user.changed('password')) {
-        console.log("changed pw")
         user.salt = User.generateSalt();
-        console.log("salted")
         user.password = User.encryptPassword(user.password(), user.salt())
-        console.log("encrypted pw")
     }
 }
 

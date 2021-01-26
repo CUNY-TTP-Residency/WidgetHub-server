@@ -30,15 +30,12 @@ router.post('/login', (req, res, next) => {
 })
 
 router.post('/signup', (req, res, next) => {
-    console.log('signing up user')
-    console.log(req.body)
     User.create({
         firstName: req.body.firstName,
         email: req.body.email,
         password: req.body.password
     })
     .then(user => {
-        console.log("test")
         return req.login(user, err => (err ? next(err) :res.json(user)))
     })
     .catch(err => {
@@ -49,7 +46,6 @@ router.post('/signup', (req, res, next) => {
 })
 
 router.get("/me", (req, res) => {
-    console.log('getting user')
     res.json(req.user);
   });
 
