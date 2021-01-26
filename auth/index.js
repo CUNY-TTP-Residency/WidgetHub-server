@@ -45,6 +45,18 @@ router.post('/signup', (req, res, next) => {
     })
 })
 
+router.delete('/logout', (req, res, next) => {
+    req.logOut()
+    req.session.destroy(err => {
+        if (err) {
+            return next(err)
+        }
+        else{
+            res.status(201).end()
+        }
+    })
+})
+
 router.get("/me", (req, res) => {
     res.json(req.user);
   });
