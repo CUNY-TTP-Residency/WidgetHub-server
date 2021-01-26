@@ -15,7 +15,9 @@ const sessionStore = new SequelizeStore({ db })
 
 const app = express();
 
+//adds user.id to current session
 passport.serializeUser((user, done) => done(null, user.id));
+//fetches user from the session user id
 passport.deserializeUser(async (id, done) => {
   try {
     const user = await db.models.user.findByPk(id);
@@ -26,13 +28,13 @@ passport.deserializeUser(async (id, done) => {
   }
 });
 
-
+//needed to read req body, otherwise req.body returns undefined
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 //CORS!
 app.use(cors({credentials: true, origin:' http://localhost:3000'}));
 
-//setting up passport and sessions
+//setting up passport and session
 app.use(
   session({
     secret: "a super secretive secret key string to encrypt and sign the cookie",
