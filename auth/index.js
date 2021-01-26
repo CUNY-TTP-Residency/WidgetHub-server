@@ -1,7 +1,7 @@
 const e = require('express');
 const express = require('express')
 const router = express.Router()
-const { User } = require('../db/models');
+const { User, Preferences } = require('../db/models');
 
 router.post('/login', (req, res, next) => {
     //searches for user with matching email
@@ -9,7 +9,9 @@ router.post('/login', (req, res, next) => {
         where: 
         {
             email: req.body.email
-        }
+        },
+            include: {model: Preferences}
+
     })
     .then(user => {
         //if no user matches, sends an error that email or password is wrong
@@ -42,11 +44,21 @@ router.post('/signup', (req, res, next) => {
         firstName: req.body.firstName,
         email: req.body.email,
         password: req.body.password
+    },{
+        include: Preferences
     })
-    //creates a session for the user that has been registered
-    .then(user => {
-        return req.login(user, err => (err ? next(err) :res.json(user)))
+    .then(createdUser => {
+        return Preferences.create()
+        .then(preference => {
+            createdUser.setPreference(preference)
+            req.login(createdUser, err => (err ? next(err) :res.json(createdUser)))
+        })
     })
+
+    // //creates a session for the user that has been registered
+    // .then(user => {
+    //     return req.login(user, err => (err ? next(err) :res.json(user)))
+    // })
     .catch(err => {
         //checks if error is due to an email that is already registered to the database
         if (err.name === 'SequelizeUniqueConstraintError') {
