@@ -12,27 +12,35 @@ const User = db.define('user', {
         validate: {
             isEmail: true
         },
-        allowNull: false
+        allowNull: false,
+        unique: true
+    },
+    password: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        get() {
+            return () => this.getDataValue("password");
+          }
     },
     salt: {
         type: Sequelize.STRING,
         get() {
           return () => this.getDataValue("salt");
         }
-    },
-    password: {
-        type: Sequelize.STRING,
-        allowNull: false
     }
 
 });
 
 User.generateSalt = () => {
-    return crypto.randomBytes(16).toString("based64")
+    console.log("generating salt")
+    const salt = crypto.randomBytes(16).toString("base64")
+    console.log("made salt")
+    return salt
 }
 
 //creating an encrypted password
 User.encryptPassword = (plaintext, salt) => {
+    console.log("encrypting")
     return crypto.createHash('RSA-SHA256')
     .update(plaintext)
     .update(salt)
@@ -40,18 +48,23 @@ User.encryptPassword = (plaintext, salt) => {
 }
 
 //comparing hashed passwords to check if they match
-User.prototype.correctPassword = (candidatepw) => {
+//throws error if you use fat arrow
+User.prototype.correctPassword = function(candidatepw) {
     return User.encryptPassword(candidatepw, this.salt()) === this.password();
 }
 
 const setSaltandPassword = user => {
+    console.log("setting salt and pw")
     if (user.changed('password')) {
+        console.log("changed pw")
         user.salt = User.generateSalt();
+        console.log("salted")
         user.password = User.encryptPassword(user.password(), user.salt())
+        console.log("encrypted pw")
     }
 }
 
-User.beforeCreate(setSaltAndPassword);
-User.beforeUpdate(setSaltAndPassword);
+User.beforeCreate(setSaltandPassword);
+User.beforeUpdate(setSaltandPassword);
 
 module.exports = User;
