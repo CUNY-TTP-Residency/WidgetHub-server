@@ -33,7 +33,16 @@ passport.deserializeUser(async (id, done) => {
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 //CORS!
-app.use(cors({credentials: true, origin:' http://localhost:3000'}));
+//app.use(cors({credentials: true, origin:' http://localhost:3000'}));
+//allows for auth/me path to work, allows passport session to return user object
+app.use(cors({
+  origin: 'http://localhost:3000',
+  credentials: true,
+  allowedHeaders: 'Content-Type,Authorization',
+  preflightContinue: true,
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS"
+}))
+
 
 //setting up passport and session
 app.use(

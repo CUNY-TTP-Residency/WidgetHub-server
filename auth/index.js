@@ -1,4 +1,3 @@
-const e = require('express');
 const express = require('express')
 const router = express.Router()
 const { User, Preferences } = require('../db/models');
@@ -85,7 +84,9 @@ router.delete('/logout', (req, res, next) => {
 })
 
 router.get("/me", (req, res) => {
-    res.json(req.user);
+    //used for debugging
+    const user = req.user ? req.user : "testing"
+    res.json(user);
   });
 
 module.exports = router
