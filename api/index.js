@@ -3,7 +3,7 @@ module.exports = router;
 
 // Mounts players api calls from api file on /api/players
 router.use('/players', require('./players'));
-
+router.use('/info', require('./externalCalls'))
 //Anythingn not found gets a 404
 router.use((req, res, next) => {
   const error = new Error('Not Found');

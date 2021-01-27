@@ -85,7 +85,7 @@ router.delete('/logout', (req, res, next) => {
 
 router.get("/me", (req, res) => {
     //used for debugging
-    const user = req.user ? req.user : "testing"
+    const user = req.user ? req.user : ""
     res.json(user);
   });
 
