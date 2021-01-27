@@ -1,7 +1,6 @@
-const e = require('express');
 const express = require('express')
 const router = express.Router()
-const { User } = require('../db/models');
+const { User, Preferences } = require('../db/models');
 
 router.post('/login', (req, res, next) => {
     //searches for user with matching email
@@ -9,7 +8,9 @@ router.post('/login', (req, res, next) => {
         where: 
         {
             email: req.body.email
-        }
+        },
+            include: {model: Preferences}
+
     })
     .then(user => {
         //if no user matches, sends an error that email or password is wrong
@@ -41,12 +42,20 @@ router.post('/signup', (req, res, next) => {
     User.create({
         firstName: req.body.firstName,
         email: req.body.email,
-        password: req.body.password
+        password: req.body.password,
+        preference: {
+            //here we can assign values to the optional widgets such as news, weather, etc
+        }
+    },{
+        include: [Preferences]
     })
-    //creates a session for the user that has been registered
-    .then(user => {
-        return req.login(user, err => (err ? next(err) :res.json(user)))
-    })
+    .then(createdUser => {
+            req.login(createdUser, err => (err ? next(err) :res.json(createdUser)))
+        })
+    // //creates a session for the user that has been registered
+    // .then(user => {
+    //     return req.login(user, err => (err ? next(err) :res.json(user)))
+    // })
     .catch(err => {
         //checks if error is due to an email that is already registered to the database
         if (err.name === 'SequelizeUniqueConstraintError') {
@@ -57,6 +66,7 @@ router.post('/signup', (req, res, next) => {
         }
     })
 })
+
 
 //does not delete user from database
 router.delete('/logout', (req, res, next) => {
@@ -74,7 +84,9 @@ router.delete('/logout', (req, res, next) => {
 })
 
 router.get("/me", (req, res) => {
-    res.json(req.user);
+    //used for debugging
+    const user = req.user ? req.user : "testing"
+    res.json(user);
   });
 
 module.exports = router

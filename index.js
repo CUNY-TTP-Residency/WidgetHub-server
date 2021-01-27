@@ -12,6 +12,7 @@ const SequelizeStore = require('connect-session-sequelize')(session.Store)
 const PORT = process.env.PORT || 8080;
 const db = require('./db');
 const sessionStore = new SequelizeStore({ db })
+const models = require('./db/models')
 
 const app = express();
 
@@ -20,7 +21,7 @@ passport.serializeUser((user, done) => done(null, user.id));
 //fetches user from the session user id
 passport.deserializeUser(async (id, done) => {
   try {
-    const user = await db.models.user.findByPk(id);
+    const user = await db.models.user.findByPk(id, {include: [models.Preferences]});
     done(null, user);
   }
   catch (err) {
@@ -32,7 +33,16 @@ passport.deserializeUser(async (id, done) => {
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 //CORS!
-app.use(cors({credentials: true, origin:' http://localhost:3000'}));
+//app.use(cors({credentials: true, origin:' http://localhost:3000'}));
+//allows for auth/me path to work, allows passport session to return user object
+app.use(cors({
+  origin: 'http://localhost:3000',
+  credentials: true,
+  allowedHeaders: 'Content-Type,Authorization',
+  preflightContinue: true,
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS"
+}))
+
 
 //setting up passport and session
 app.use(
