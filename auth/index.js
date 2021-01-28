@@ -1,15 +1,15 @@
 const express = require('express')
 const router = express.Router()
-const { User, Preferences } = require('../db/models');
+const models = require('../db/models');
 
 router.post('/login', (req, res, next) => {
     //searches for user with matching email
-    User.findOne({
+    models.User.findOne({
         where: 
         {
             email: req.body.email
         },
-            include: {model: Preferences}
+            include: [models.Preferences, models.Tasks]
 
     })
     .then(user => {
@@ -39,7 +39,7 @@ router.post('/login', (req, res, next) => {
 
 router.post('/signup', (req, res, next) => {
     //adds new user to the database
-    User.create({
+    models.User.create({
         firstName: req.body.firstName,
         email: req.body.email,
         password: req.body.password,
