@@ -26,7 +26,7 @@ router.post('/', (req, res, next) => {
         userId: req.body.userId
     })
     .then(newTask => {
-        res.status(200).send('Successfully created task')
+        res.status(200).send(newTask)
     })
     .catch(error => res.status(400).send('error creating task: ', error.message))
 })
