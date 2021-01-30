@@ -5,6 +5,7 @@ module.exports = router;
 router.use('/players', require('./players'));
 router.use('/info', require('./externalCalls'));
 router.use('/tasks', require('./tasks'))
+router.use('/preferences', require('./preferences'))
 
 //Anythingn not found gets a 404
 router.use((req, res, next) => {

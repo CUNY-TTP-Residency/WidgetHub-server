@@ -44,10 +44,14 @@ router.post('/signup', (req, res, next) => {
         email: req.body.email,
         password: req.body.password,
         preference: {
-            //here we can assign values to the optional widgets such as news, weather, etc
+            clock: req.body.clock,
+            toDoList:req.body.toDo,
+            weather:req.body.weather,
+            news: req.body.news,
+            covid: req.body.covid
         }
     },{
-        include: [Preferences]
+        include: models.Preferences
     })
     .then(createdUser => {
             req.login(createdUser, err => (err ? next(err) :res.json(createdUser)))
