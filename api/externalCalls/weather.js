@@ -5,7 +5,6 @@ const axios = require('axios');
 router.get('/', (req, res, next) => {
     axios.get(`http://api.openweathermap.org/data/2.5/weather?q=brooklyn&units=imperial&appid=${process.env.WEATHER}`)
     .then(weather => {
-        console.log(weather)
         res.status(200).json(weather.data.main)
     })
     .catch(err => {
