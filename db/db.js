@@ -8,6 +8,12 @@ const db = new Sequelize(
   process.env.DATABASE_URL || `postgres://${process.env.DB_HOST}:${process.env.DB_PW}@localhost:5432/${name}`,
   {
     logging: false,
+    dialectOptions: {
+      ssl: {
+          sslmode: 'require',
+          rejectUnauthorized: false
+      }
+    }
   }
 );
 
