@@ -13,7 +13,7 @@ router.put('/:id', (req, res, next) => {
             covid: req.body.covid,
         })
         preferences.save();
-        res.status(200).send('user updated')
+        res.status(200).send(preferences)
     })
     .catch(err => {
         res.status(500).json({
